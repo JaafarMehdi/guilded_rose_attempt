@@ -11,49 +11,39 @@ class GildedRose
 
   def update_quality()
     @items.each do |item|
-      if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
-        if item.quality > 0
-          if item.name != "Sulfuras, Hand of Ragnaros"
-            item.quality = item.quality - 1
-          end
-        end
-      else
-        if item.quality < 50
-          item.quality = item.quality + 1
-          if item.name == "Backstage passes to a TAFKAL80ETC concert"
-            if item.sell_in < 11
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-            if item.sell_in < 6
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-          end
-        end
-      end
+
       if item.name != "Sulfuras, Hand of Ragnaros"
         item.sell_in = item.sell_in - 1
       end
-      if item.sell_in < 0
-        if item.name != "Aged Brie"
-          if item.name != "Backstage passes to a TAFKAL80ETC concert"
-            if item.quality > 0
-              if item.name != "Sulfuras, Hand of Ragnaros"
-                item.quality = item.quality - 1
-              end
-            end
-          else
-            item.quality = item.quality - item.quality
-          end
-        else
-          if item.quality < 50
-            item.quality = item.quality + 1
-          end
+
+      case item.name
+      when BACKSTAGE_PASS
+        item.quality = item.quality + 1
+        if item.sell_in < 10
+          item.quality = item.quality + 1
+        end
+        if item.sell_in < 5
+          item.quality = item.quality + 1
+        end
+        if item.sell_in < 1
+          item.quality = 0
+        end
+      when BRIE
+        item.quality = item.quality + 1
+        if item.sell_in < 0
+          item.quality = item.quality + 1
+        end
+      when SULFURAS
+        next
+      else
+        item.quality = item.quality - 1
+        if item.sell_in < 0
+          item.quality = item.quality - 1
         end
       end
+
+      item.quality = [item.quality, 50].min
+      item.quality = [item.quality, 0].max
     end
   end
 end
