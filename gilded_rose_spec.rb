@@ -57,9 +57,9 @@ describe GildedRose do
     end
 
     context "sulfuras" do
-      #can Sulfuras have quality higher than 50 ? what happens then?
+      #can Sulfuras have quality higher than 50 ? what happens
 
-      let(:item) {Item.new(GildedRose::SULFURAS, 1, 1)}
+      let(:item) {Item.new(GildedRose::SULFURAS, 80, 80)}
 
       it "does not change quality" do
         expect { subject }.to_not change { item.quality }
@@ -98,6 +98,24 @@ describe GildedRose do
         item.sell_in = 5
         item.quality = 49
         expect { subject }.to change { item.quality }.to(50)
+      end
+    end
+
+    context "conjured" do
+      let(:item) {Item.new(GildedRose::CONJURED, 2, 8)}
+
+      it "does increases quality" do
+        expect { subject }.to change { item.quality }.by(-2)
+      end
+
+      it "does increases quality post sell date" do
+        item.sell_in = -1
+        expect { subject }.to change { item.quality }.by(-4)
+      end
+
+      it "does does increases quality below 0" do
+        item.quality = 1
+        expect { subject }.to change { item.quality }.to(0)
       end
     end
   end

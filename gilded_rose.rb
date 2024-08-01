@@ -3,6 +3,7 @@ class GildedRose
   BRIE = 'Aged Brie'
   BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
   SULFURAS = "Sulfuras, Hand of Ragnaros"
+  CONJURED = 'Conjured'
 
 
   def initialize(items)
@@ -11,10 +12,9 @@ class GildedRose
 
   def update_quality()
     @items.each do |item|
+      next if item.name == SULFURAS
 
-      if item.name != "Sulfuras, Hand of Ragnaros"
-        item.sell_in = item.sell_in - 1
-      end
+      item.sell_in = item.sell_in - 1
 
       case item.name
       when BACKSTAGE_PASS
@@ -33,8 +33,11 @@ class GildedRose
         if item.sell_in < 0
           item.quality = item.quality + 1
         end
-      when SULFURAS
-        next
+      when CONJURED
+        item.quality = item.quality - 2
+        if item.sell_in < 0
+          item.quality = item.quality - 2
+        end
       else
         item.quality = item.quality - 1
         if item.sell_in < 0
