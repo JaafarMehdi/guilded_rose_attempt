@@ -38,5 +38,59 @@ describe GildedRose do
   #TODO spec that it works for multiple items
 
   context "special items" do
+    context "aged brie" do
+      let(:item) {Item.new(GildedRose::BRIE, 1, 1)}
+
+      it "does increases quality" do
+        expect { subject }.to change { item.quality }.by(1)
+      end
+
+      it "does increases quality post sell date" do
+        item.sell_in = -1
+        expect { subject }.to change { item.quality }.by(2)
+      end
+
+      it "does does increases quality past 50" do
+        item.quality = 50
+        expect { subject }.to_not change { item.quality }
+      end
+    end
+
+    context "sulfuras" do
+      let(:item) {Item.new(GildedRose::SULFURAS, 1, 1)}
+
+      it "does not change quality" do
+        expect { subject }.to_not change { item.quality }
+      end
+
+      it "does not change sell_in" do
+        expect { subject }.to_not change { item.sell_in }
+      end
+    end
+
+    context "backstage pass" do
+      let(:item) {Item.new(GildedRose::BACKSTAGE_PASS, 10, 11)}
+
+      it "does drop to 0 post sale" do
+        item.sell_in = 0
+        expect { subject }.to change { item.quality }.to(0)
+      end
+
+      it "does increase by 1 with 11+days" do
+        item.sell_in = 11
+        expect { subject }.to change { item.quality }.by(1)
+      end
+
+
+      it "does increase by 2 <10 days" do
+        item.sell_in = 8
+        expect { subject }.to change { item.quality }.by(2)
+      end
+
+      it "does inclrease by 3 <5 days" do
+        item.sell_in = 5
+        expect { subject }.to change { item.quality }.by(3)
+      end
+    end
   end
 end
